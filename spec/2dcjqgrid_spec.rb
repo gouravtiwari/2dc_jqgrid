@@ -95,7 +95,15 @@ describe "to_jqgrid_json" do
     p json
   end
   
-end
+    it "should generate a valid json response when any attribute(user name) has double quote(s) otherwise it will skip the page" do
+      # escape_javascript or escape_json doesn't work
+    @data = []
+    5.times do |i|
+      @data << User.new(:id => i+1, :username => "user_\"_#{i+1}", :email => "user_#{i+1}@test.be", :password => "a_password")
+    end
+    json = @data.to_jqgrid_json([:id, :username, :email, :password], 1, 10, @data.size)
+    json.should == "{\"page\":\"1\",\"total\":1,\"records\":\"5\",\"rows\":[{\"id\":\"1\",\"cell\":[\"1\",\"user_\\\"_1\",\"user_1@test.be\",\"a_password\"]},{\"id\":\"2\",\"cell\":[\"2\",\"user_\\\"_2\",\"user_2@test.be\",\"a_password\"]},{\"id\":\"3\",\"cell\":[\"3\",\"user_\\\"_3\",\"user_3@test.be\",\"a_password\"]},{\"id\":\"4\",\"cell\":[\"4\",\"user_\\\"_4\",\"user_4@test.be\",\"a_password\"]},{\"id\":\"5\",\"cell\":[\"5\",\"user_\\\"_5\",\"user_5@test.be\",\"a_password\"]}]}"
+  end
 
 module JqgridTestHelper
   def jqgrid_shortcut(options = {})

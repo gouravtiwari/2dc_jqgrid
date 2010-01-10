@@ -370,7 +370,9 @@ module JqgridJson
         couples = elem.attributes.symbolize_keys
         attributes.each do |atr|
           value = get_atr_value(elem, atr, couples)
-          value = escape_javascript(value) if value and value.is_a? String
+          # replaced escape javascript line with line below so that it does not through error when there is a double quote in the JSON response, added spec for the same
+          # value = escape_javascript(value) if value and value.is_a? String
+          value = value.gsub(/"/, '\"') if value and value.is_a?(String)
           json << %Q("#{value}",)
         end
         json.chop! << "]},"
